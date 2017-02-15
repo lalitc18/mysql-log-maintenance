@@ -1,6 +1,6 @@
-#mysql-logrotate script for rotating various MySQLlogs like error,slow,general logs.
+#mysql-logrotate script for rotating various MySQL logs like error,slow query and general logs.
 
-########################################### OPTIONS ##########################################################
+########################################### logrotate OPTIONS ##########################################################
 #     ifempty
 #       Rotate the log file even if it is empty, overriding the notifempty option (ifempty is the default).
 
@@ -64,9 +64,9 @@
     postrotate
         # just if mysqld is really running
         if test -x /usr/bin/mysqladmin && \
-           /usr/bin/mysqladmin --login-path=monitor_client ping &>/dev/null
+           /usr/bin/mysqladmin --login-path=logadmin_client ping &>/dev/null
         then
-           /usr/bin/mysqladmin --login-path=monitor_client  flush-logs
+           /usr/bin/mysqladmin --login-path=logadmin_client  flush-logs
         fi
     endscript
 }
