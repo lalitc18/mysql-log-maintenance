@@ -8,16 +8,18 @@ We can schedule mysql log rotation on the basis of size,time or both using mysql
 
 MYSQL USER and Privileges:
 CREATE USER  'logadmin'@'localhost' IDENTIFIED BY 'xyzpwd';
+
 GRANT RELOAD ON *.* TO 'logadmin'@'localhost';
 
 ######################################################
 # Secure user credentials using mysql_config_editor: # 
 ######################################################
-mysql_config_editor set --login-path=logadmin_client --host=localhost --user=monitor --password                                         
-Enter password:<enter_mysql_logadmin_user_password>
+mysql_config_editor set --login-path=logadmin_client --host=localhost --user=monitor --password 
+
+Enter password: enter_mysql_logadmin_user_password
 
 ####################
 # Crontab          #
 ####################
 
-00 03 * * * /usr/sbin/logrotate -s /<PATH>/log/logrotate.status /<PATH>/mysql-log-rotate.sh > /<path>/log/logrotate_cron.log 2>&1
+00 03 * * * /usr/sbin/logrotate -s /PATH>/log/logrotate.status /PATH/mysql-log-rotate.sh > /PATH/log/logrotate_cron.log 2>&1
