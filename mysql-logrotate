@@ -1,0 +1,74 @@
+#mysql-logrotate script for rotating various MySQLlogs like error,slow,general logs.
+
+########################################### OPTIONS ##########################################################
+#     ifempty
+#       Rotate the log file even if it is empty, overriding the notifempty option (ifempty is the default).
+
+#     minsize <size>
+#       Log files are rotated when they grow bigger than size bytes, but not before the additionally
+#       specified time interval (daily,  weekly,  monthly,  or  yearly).
+#       The related  size  option  is similar except that it is mutually exclusive with the time interval options,
+#       and it causes log files to be rotated without regard for the last rotation time.
+#       When minsize is used, both the size and timestamp of a log file are considered.
+
+#     missingok
+#       If the log file is missing, go on to the next one without issuing an error message. See also nomissingok.
+#      monthly
+#        Log files are rotated the first time logrotate is run in a month (this is normally on the first day of the month).
+#      rotate count
+#        Log files are rotated count times before being removed or mailed to the address specified in a mail directive.
+#         If count is 0, old versions are removed rather  than rotated.
+#      size <size>
+#        Log files are rotated only if they grow bigger then size bytes. If size is followed by k, the size is assumed
+#        to be in kilobytes.  If the M is used, the size is in megabytes, and if G is used, the size is in gigabytes.
+#        So size 100, size 100k, size 100M and size 100Gare all valid.
+# Refer logrotate man page or option for more options.
+
+##################
+# General Log    #
+##################
+<LOG-PATH>/log/general-query.log {
+        create 640 mysql mysql
+        rotate 5
+        monthly
+        minsize 10M
+        notifempty
+        missingok
+        compress     
+}
+###################
+# Slow Query Log  #
+###################
+<LOG-PATH>/log/slow-query.log {
+        create 640 mysql mysql
+        rotate 5
+        monthly
+        minsize 10M
+        notifempty
+        missingok
+        compress
+    
+}
+
+#####################
+# MySQL server logs #
+#####################
+   <LOG-PATH>/log/mysqld.log {
+        create 640 mysql mysql
+        rotate 5
+        monthly
+        minsize 10M
+        notifempty
+        missingok
+        compress
+    postrotate
+        # just if mysqld is really running
+        if test -x /usr/bin/mysqladmin && \
+           /usr/bin/mysqladmin --login-path=monitor_client ping &>/dev/null
+        then
+           /usr/bin/mysqladmin --login-path=monitor_client  flush-logs
+        fi
+    endscript
+}
+
+# End of Script
